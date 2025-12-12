@@ -40,7 +40,7 @@ Read @page-specs/flows/02.00-browse-and-purchase.flow.yaml and generate Playwrig
 
 The AI traces through the flow steps, understands the user journey, and outputs tests that cover each step with proper assertions.
 
-See [prompts.txt](../prompts.txt) for more examples.
+See [prompts.txt](prompts.txt) for more examples.
 
 ## Getting Started
 
@@ -64,7 +64,7 @@ pnpm run docs
 
 Open <http://localhost:3000> to browse all specs interactively.
 
-![Launching the spec browser](../images/Launching%20Docs.gif)
+![Launching the spec browser](images/Launching%20Docs.gif)
 
 ### Validate Your Specs
 
@@ -86,7 +86,7 @@ Run pnpm run lint, then fix any validation errors in the page specs.
 
 The AI will read the error output, locate the invalid properties, and update the YAML to conform to the schema.
 
-![Running lint via AI](../images/Linting.gif)
+![Running lint via AI](images/Linting.gif)
 
 ## Directory Structure
 
@@ -104,7 +104,7 @@ page-specs/
 
 ## Workflow
 
-Use AI prompts to create and modify specs — see [prompts.txt](../prompts.txt) for examples. The YAML is designed to be maintained by AI, not written by hand (though small tweaks are fine).
+Use AI prompts to create and modify specs — see [prompts.txt](prompts.txt) for examples. The YAML is designed to be maintained by AI, not written by hand (though small tweaks are fine).
 
 For VS Code autocomplete and validation, install the [YAML extension](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml).
 
