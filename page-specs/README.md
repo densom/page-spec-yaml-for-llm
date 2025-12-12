@@ -12,6 +12,8 @@ Natural language is great for explaining intent but terrible for specifying UI b
 
 This project is a template. Copy the `page-specs/` folder into your real project — that works better than standalone. When the specs live alongside your code, the AI can reference your existing components, styles, and patterns when generating implementations.
 
+The included specs define an **example e-commerce store** — product browsing, cart, checkout, user accounts, and admin dashboards. Use these as a reference for the format, then delete and replace them with your own application's pages and flows.
+
 ### Example Prompts
 
 **Generate a component from a spec:**
@@ -87,8 +89,6 @@ The AI will read the error output, locate the invalid properties, and update the
 ![Running lint via AI](../images/Linting.gif)
 
 ## Directory Structure
-
-This repo includes an example e-commerce store spec to illustrate the format.
 
 ```text
 page-specs/
