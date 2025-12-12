@@ -1,0 +1,93 @@
+# yaml-language-server: $schema=../schemas/ui-flow.schema.json
+
+flow: User Registration
+goal: Create a new account to access personalized shopping features
+
+actor: Guest user
+
+preconditions:
+  - User is not logged in
+  - User does not have an existing account with the provided email
+
+steps:
+  - step: 1
+    page: /
+    description: Guest visits the store
+    system-response: Displays homepage with sign up option in header
+    user-action: Clicks "Sign Up" or "Create Account" link
+
+  - step: 2
+    page: /register
+    description: Guest fills out registration form
+    user-action: Enters name, email, password, and confirms password
+    system-response: Validates input fields in real-time
+    data:
+      firstName: "User's first name"
+      lastName: "User's last name"
+      email: "User's email address"
+      password: "Chosen password (min 8 characters)"
+
+  - step: 3
+    page: /register
+    description: Guest submits registration form
+    user-action: Accepts terms of service and clicks "Create Account"
+    system-response: Validates all fields, creates account, sends verification email
+    decision:
+      condition: Registration result
+      branches:
+        - when: Email already registered
+          then: Show error, suggest login
+        - when: Validation errors
+          then: Show specific field errors, remain on form
+        - when: Success
+          then: Continue to step 4
+
+  - step: 4
+    page: /account
+    description: New user arrives at account dashboard
+    system-response: Displays welcome message and account overview
+    notes: User is automatically logged in after registration
+
+outcome: User has a new account and can access personalized features like wishlists, order history, and faster checkout
+
+alternate-flows:
+  - name: Social Sign-Up
+    trigger: User clicks "Sign up with Google" or "Sign up with Apple"
+    steps:
+      - step: 1
+        page: /register
+        description: User initiates social sign-up
+        user-action: Clicks social provider button
+        system-response: Redirects to OAuth provider
+      - step: 2
+        page: /register
+        description: User authorizes with social provider
+        user-action: Approves access on provider's page
+        system-response: Creates account using social profile data
+    rejoins: step 4
+
+  - name: Already Has Account
+    trigger: User realizes they have an existing account
+    steps:
+      - step: 1
+        page: /register
+        description: User sees "Already have an account?" prompt
+        user-action: Clicks "Sign in" link
+        system-response: Redirects to login page
+    rejoins: end
+
+error-flows:
+  - name: Email Already Exists
+    trigger: Email is already registered
+    handling: Display error message with option to login or reset password
+    recovery: User can click "Sign in" or "Forgot password?" links
+
+  - name: Password Too Weak
+    trigger: Password doesn't meet requirements
+    handling: Display password requirements and specific missing criteria
+    recovery: User updates password to meet requirements
+
+  - name: Server Error
+    trigger: Unexpected server error during registration
+    handling: Display friendly error message with retry option
+    recovery: User can retry submission or contact support

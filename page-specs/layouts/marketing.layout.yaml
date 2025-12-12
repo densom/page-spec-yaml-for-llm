@@ -1,0 +1,95 @@
+# yaml-language-server: $schema=../schemas/ui-layout.schema.json
+
+layout: marketing
+description: Public-facing marketing pages with branded header navigation and comprehensive footer
+
+header:
+  - logo
+  - type: nav
+    items:
+      - type: link
+        label: Shop
+        action: /products
+      - type: link
+        label: About
+        action: /about
+      - type: link
+        label: Contact
+        action: /contact
+      - type: button
+        label: Log In
+        variant: ghost
+        action: /login
+      - type: button
+        label: Sign Up
+        variant: primary
+        action: /register
+
+footer:
+  - type: row
+    items:
+      - type: column
+        label: Shop
+        items:
+          - type: link
+            label: All Products
+            action: /products
+          - type: link
+            label: Electronics
+            action: /products?category=electronics
+          - type: link
+            label: Clothing
+            action: /products?category=clothing
+          - type: link
+            label: Home & Garden
+            action: /products?category=home-garden
+
+      - type: column
+        label: Company
+        items:
+          - type: link
+            label: About Us
+            action: /about
+          - type: link
+            label: Contact
+            action: /contact
+          - type: link
+            label: Careers
+            action: /careers
+
+      - type: column
+        label: Support
+        items:
+          - type: link
+            label: Help Center
+            action: /help
+          - type: link
+            label: Shipping Info
+            action: /shipping
+          - type: link
+            label: Returns
+            action: /returns
+
+      - type: column
+        label: Legal
+        items:
+          - type: link
+            label: Privacy Policy
+            action: /privacy
+          - type: link
+            label: Terms of Service
+            action: /terms
+          - type: link
+            label: Cookie Policy
+            action: /cookies
+
+  - type: row
+    items:
+      - logo
+      - type: text
+        value: "© 2025 Your Store. All rights reserved."
+
+wrapper:
+  maxWidth: xl
+  padding: md
+  centered: true

@@ -1,0 +1,171 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/ui-flow.schema.json",
+  "title": "UI Flow Specification",
+  "description": "Multi-page user flow specification for documenting user journeys",
+  "type": "object",
+  "required": ["flow", "goal", "steps"],
+  "additionalProperties": false,
+  "properties": {
+    "flow": {
+      "type": "string",
+      "description": "Human-readable name for this flow"
+    },
+    "goal": {
+      "type": "string",
+      "description": "What the user is trying to accomplish"
+    },
+    "actor": {
+      "type": "string",
+      "description": "The type of user performing this flow (e.g., 'authenticated user', 'admin', 'guest')"
+    },
+    "preconditions": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Conditions that must be true before starting this flow"
+    },
+    "steps": {
+      "type": "array",
+      "description": "Ordered sequence of steps in this flow",
+      "items": { "$ref": "#/$defs/step" }
+    },
+    "outcome": {
+      "type": "string",
+      "description": "The end result when the flow completes successfully"
+    },
+    "alternate-flows": {
+      "type": "array",
+      "description": "Alternative paths through this flow",
+      "items": { "$ref": "#/$defs/alternateFlow" }
+    },
+    "error-flows": {
+      "type": "array",
+      "description": "Error handling paths",
+      "items": { "$ref": "#/$defs/errorFlow" }
+    }
+  },
+  "$defs": {
+    "step": {
+      "type": "object",
+      "required": ["step", "page"],
+      "additionalProperties": false,
+      "properties": {
+        "step": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Step number in the sequence"
+        },
+        "page": {
+          "type": "string",
+          "pattern": "^/",
+          "description": "The page route for this step"
+        },
+        "description": {
+          "type": "string",
+          "description": "What happens at this step"
+        },
+        "user-action": {
+          "type": "string",
+          "description": "What the user does (e.g., 'clicks Submit', 'fills form')"
+        },
+        "system-response": {
+          "type": "string",
+          "description": "How the system responds to the user action"
+        },
+        "data": {
+          "type": "object",
+          "description": "Data involved in this step",
+          "additionalProperties": { "type": "string" }
+        },
+        "decision": {
+          "$ref": "#/$defs/decision",
+          "description": "A branching decision point at this step"
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional notes or considerations"
+        },
+        "condition": {
+          "type": "string",
+          "description": "Condition that must be true for this step to apply (e.g., \"{user.isAuthenticated}\")"
+        }
+      }
+    },
+    "decision": {
+      "type": "object",
+      "required": ["condition", "branches"],
+      "additionalProperties": false,
+      "properties": {
+        "condition": {
+          "type": "string",
+          "description": "What determines which branch to take"
+        },
+        "branches": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/branch" }
+        }
+      }
+    },
+    "branch": {
+      "type": "object",
+      "required": ["when", "then"],
+      "additionalProperties": false,
+      "properties": {
+        "when": {
+          "type": "string",
+          "description": "Condition for this branch"
+        },
+        "then": {
+          "type": "string",
+          "description": "What happens (e.g., 'continue', 'goto step 5', '/error-page')"
+        }
+      }
+    },
+    "alternateFlow": {
+      "type": "object",
+      "required": ["name", "trigger", "steps"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of this alternate flow"
+        },
+        "trigger": {
+          "type": "string",
+          "description": "What triggers this alternate path (e.g., 'at step 3, user clicks Cancel')"
+        },
+        "steps": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/step" }
+        },
+        "rejoins": {
+          "type": "string",
+          "description": "Where this flow rejoins the main flow (e.g., 'step 5' or 'end')"
+        }
+      }
+    },
+    "errorFlow": {
+      "type": "object",
+      "required": ["name", "trigger", "handling"],
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of this error scenario"
+        },
+        "trigger": {
+          "type": "string",
+          "description": "What causes this error (e.g., 'validation fails at step 2')"
+        },
+        "handling": {
+          "type": "string",
+          "description": "How the error is handled"
+        },
+        "recovery": {
+          "type": "string",
+          "description": "How the user can recover (e.g., 'retry from step 2')"
+        }
+      }
+    }
+  }
+}

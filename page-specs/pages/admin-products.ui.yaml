@@ -1,0 +1,235 @@
+# yaml-language-server: $schema=../schemas/ui-spec.schema.json
+
+page: Admin Products
+route: /admin/products
+purpose: Manage product catalog - add, edit, and remove products
+auth: admin
+layout: admin
+
+sections:
+  - header:
+      - type: row
+        items:
+          - type: heading
+            level: 1
+            label: Product Management
+          - type: button
+            label: Add Product
+            variant: primary
+            onClick: openModal:addProduct
+
+      - type: row
+        items:
+          - type: stat
+            label: Total Products
+            value: "{stats.totalProducts}"
+          - type: stat
+            label: Active
+            value: "{stats.activeProducts}"
+          - type: stat
+            label: Out of Stock
+            value: "{stats.outOfStock}"
+          - type: stat
+            label: Low Stock
+            value: "{stats.lowStock}"
+
+  - main:
+      - type: filter-bar
+        items:
+          - type: search
+            placeholder: Search products...
+          - type: select
+            label: Category
+            options:
+              - All Categories
+              - Electronics
+              - Clothing
+              - Home & Garden
+              - Sports
+          - type: select
+            label: Status
+            options:
+              - All Status
+              - Active
+              - Draft
+              - Out of Stock
+
+      - type: table
+        source: products
+        columns:
+          - key: image
+            label: Image
+          - key: name
+            label: Product Name
+            sortable: true
+          - key: sku
+            label: SKU
+          - key: category
+            label: Category
+            format: badge
+          - key: price
+            label: Price
+            format: currency
+            sortable: true
+          - key: stock
+            label: Stock
+            format: number
+            sortable: true
+          - key: status
+            label: Status
+            format: badge
+          - key: actions
+            label: Actions
+            format: actions
+
+      - type: pagination
+        value: "{products.currentPage}"
+
+modals:
+  addProduct:
+    title: Add New Product
+    size: lg
+    content:
+      - type: form
+        fields:
+          - name: name
+            type: text
+            label: Product Name
+            placeholder: Enter product name
+            required: true
+          - name: description
+            type: textarea
+            label: Description
+            placeholder: Describe your product
+            required: true
+          - name: category
+            type: select
+            label: Category
+            options:
+              - Electronics
+              - Clothing
+              - Home & Garden
+              - Sports
+            required: true
+          - name: price
+            type: number
+            label: Price ($)
+            placeholder: "0.00"
+            required: true
+          - name: compareAtPrice
+            type: number
+            label: Compare at Price ($)
+            placeholder: Original price for sale items
+          - name: sku
+            type: text
+            label: SKU
+            placeholder: Stock Keeping Unit
+            required: true
+          - name: stock
+            type: number
+            label: Stock Quantity
+            placeholder: "0"
+            required: true
+          - name: images
+            type: file
+            label: Product Images
+          - name: status
+            type: select
+            label: Status
+            options:
+              - Active
+              - Draft
+            required: true
+    actions:
+      - type: button
+        label: Cancel
+        variant: ghost
+        onClick: closeModal
+      - type: button
+        label: Add Product
+        variant: primary
+        onClick: submit
+
+  editProduct:
+    title: "Edit Product: {product.name}"
+    size: lg
+    content:
+      - type: form
+        fields:
+          - name: name
+            type: text
+            label: Product Name
+            required: true
+          - name: description
+            type: textarea
+            label: Description
+            required: true
+          - name: category
+            type: select
+            label: Category
+            options:
+              - Electronics
+              - Clothing
+              - Home & Garden
+              - Sports
+            required: true
+          - name: price
+            type: number
+            label: Price ($)
+            required: true
+          - name: compareAtPrice
+            type: number
+            label: Compare at Price ($)
+          - name: sku
+            type: text
+            label: SKU
+            required: true
+          - name: stock
+            type: number
+            label: Stock Quantity
+            required: true
+          - name: status
+            type: select
+            label: Status
+            options:
+              - Active
+              - Draft
+            required: true
+    actions:
+      - type: button
+        label: Cancel
+        variant: ghost
+        onClick: closeModal
+      - type: button
+        label: Delete Product
+        variant: danger
+        onClick: deleteProduct
+      - type: button
+        label: Save Changes
+        variant: primary
+        onClick: submit
+
+  confirmDelete:
+    title: Delete Product
+    size: sm
+    content:
+      - type: text
+        value: "Are you sure you want to delete \"{product.name}\"? This action cannot be undone."
+    actions:
+      - type: button
+        label: Cancel
+        variant: ghost
+        onClick: closeModal
+      - type: button
+        label: Delete
+        variant: danger
+        onClick: confirmDelete
+
+flows:
+  add-product:
+    trigger: add-product-button
+    to: /admin/products
+
+  edit-product:
+    trigger: product-edit-button
+    to: /admin/products/{product.id}/edit

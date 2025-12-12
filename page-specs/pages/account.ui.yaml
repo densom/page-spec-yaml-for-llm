@@ -1,0 +1,188 @@
+# yaml-language-server: $schema=../schemas/ui-spec.schema.json
+
+page: My Account
+route: /account
+purpose: User account dashboard with orders, profile, and settings
+auth: authenticated
+layout: dashboard
+
+sections:
+  - header:
+      - type: heading
+        level: 1
+        label: "Welcome back, {user.firstName}"
+
+      - type: row
+        items:
+          - type: stat
+            label: Total Orders
+            value: "{user.orderCount}"
+          - type: stat
+            label: Wishlist Items
+            value: "{user.wishlistCount}"
+          - type: stat
+            label: Reward Points
+            value: "{user.rewardPoints}"
+
+  - recent-orders:
+      - type: card
+        items:
+          - type: row
+            items:
+              - type: heading
+                level: 2
+                label: Recent Orders
+              - type: link
+                label: View All Orders
+                action: /account/orders
+
+          - type: list
+            source: recentOrders
+            repeat: order
+            empty: You haven't placed any orders yet. Start shopping to see your orders here!
+            items:
+              - type: card
+                items:
+                  - type: row
+                    items:
+                      - type: text
+                        value: "Order #{order.orderNumber}"
+                      - type: badge
+                        label: "{order.status}"
+                      - type: text
+                        value: "{order.date}"
+                      - type: text
+                        value: "${order.total}"
+                      - type: button
+                        label: View Details
+                        variant: secondary
+                        action: /account/orders/{order.id}
+
+  - quick-actions:
+      - type: card
+        items:
+          - type: heading
+            level: 2
+            label: Quick Actions
+
+          - type: grid
+            items:
+              - type: card
+                items:
+                  - type: icon
+                    label: package
+                  - type: heading
+                    level: 3
+                    label: Track Orders
+                  - type: text
+                    value: View and track your order status
+                  - type: button
+                    label: View Orders
+                    variant: secondary
+                    action: /account/orders
+
+              - type: card
+                items:
+                  - type: icon
+                    label: heart
+                  - type: heading
+                    level: 3
+                    label: Wishlist
+                  - type: text
+                    value: Products you've saved for later
+                  - type: button
+                    label: View Wishlist
+                    variant: secondary
+                    action: /account/wishlist
+
+              - type: card
+                items:
+                  - type: icon
+                    label: map-pin
+                  - type: heading
+                    level: 3
+                    label: Addresses
+                  - type: text
+                    value: Manage your shipping addresses
+                  - type: button
+                    label: Manage Addresses
+                    variant: secondary
+                    action: /account/addresses
+
+              - type: card
+                items:
+                  - type: icon
+                    label: credit-card
+                  - type: heading
+                    level: 3
+                    label: Payment Methods
+                  - type: text
+                    value: Manage saved payment methods
+                  - type: button
+                    label: Manage Payments
+                    variant: secondary
+                    action: /account/payment
+
+  - account-settings:
+      - type: card
+        items:
+          - type: heading
+            level: 2
+            label: Account Settings
+
+          - type: row
+            items:
+              - type: column
+                items:
+                  - type: heading
+                    level: 3
+                    label: Profile Information
+                  - type: text
+                    value: "{user.email}"
+                  - type: text
+                    value: "Member since {user.memberSince}"
+              - type: button
+                label: Edit Profile
+                variant: secondary
+                onClick: openModal:editProfile
+
+modals:
+  editProfile:
+    title: Edit Profile
+    size: md
+    content:
+      - type: form
+        fields:
+          - name: firstName
+            type: text
+            label: First Name
+            required: true
+          - name: lastName
+            type: text
+            label: Last Name
+            required: true
+          - name: email
+            type: email
+            label: Email Address
+            required: true
+          - name: phone
+            type: tel
+            label: Phone Number
+    actions:
+      - type: button
+        label: Cancel
+        variant: ghost
+        onClick: closeModal
+      - type: button
+        label: Save Changes
+        variant: primary
+        onClick: submit
+
+flows:
+  view-orders:
+    trigger: view-orders-link
+    to: /account/orders
+
+  view-wishlist:
+    trigger: wishlist-button
+    to: /account/wishlist

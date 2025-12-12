@@ -1,0 +1,108 @@
+# yaml-language-server: $schema=../schemas/ui-spec.schema.json
+
+page: Products
+route: /products
+purpose: Browse and filter products in the catalog
+auth: public
+layout: default
+
+sections:
+  - main:
+      - type: breadcrumb
+        items:
+          - type: link
+            label: Home
+            action: /
+          - type: text
+            value: Products
+
+      - type: row
+        items:
+          - type: heading
+            level: 1
+            label: All Products
+          - type: text
+            value: "{products.totalCount} products"
+
+      - type: filter-bar
+        items:
+          - type: search
+            placeholder: Search products...
+          - type: select
+            label: Category
+            options:
+              - All Categories
+              - Electronics
+              - Clothing
+              - Home & Garden
+              - Sports
+          - type: select
+            label: Sort By
+            options:
+              - Featured
+              - "Price: Low to High"
+              - "Price: High to Low"
+              - Newest
+              - Best Selling
+          - type: select
+            label: Price Range
+            options:
+              - Any Price
+              - Under $25
+              - $25 - $50
+              - $50 - $100
+              - Over $100
+          - type: toggle
+            label: On Sale Only
+
+      - type: list
+        source: products
+        repeat: product
+        empty: No products found matching your criteria. Try adjusting your filters.
+        items:
+          - type: card
+            items:
+              - type: image
+                value: "{product.imageUrl}"
+              - type: badge
+                label: Sale
+                variant: danger
+                condition: "{product.onSale}"
+              - type: badge
+                label: New
+                variant: info
+                condition: "{product.isNew}"
+              - type: heading
+                level: 3
+                label: "{product.name}"
+              - type: text
+                value: "{product.shortDescription}"
+              - type: row
+                items:
+                  - type: text
+                    value: "${product.price}"
+                  - type: text
+                    value: "${product.originalPrice}"
+                    condition: "{product.onSale}"
+              - type: row
+                items:
+                  - type: button
+                    label: View Details
+                    variant: secondary
+                    action: /products/{product.id}
+                  - type: button
+                    label: Add to Cart
+                    variant: primary
+                    onClick: addToCart
+
+      - type: pagination
+        value: "{products.currentPage}"
+
+flows:
+  view-product:
+    trigger: product-card-click
+    to: /products/{product.id}
+
+  add-to-cart:
+    trigger: add-to-cart-button
+    to: /cart

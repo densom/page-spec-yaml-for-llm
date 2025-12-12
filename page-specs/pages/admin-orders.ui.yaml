@@ -1,0 +1,257 @@
+# yaml-language-server: $schema=../schemas/ui-spec.schema.json
+
+page: Admin Orders
+route: /admin/orders
+purpose: View and manage customer orders, update fulfillment status
+auth: admin
+layout: admin
+
+sections:
+  - header:
+      - type: row
+        items:
+          - type: heading
+            level: 1
+            label: Order Management
+          - type: button
+            label: Export Orders
+            variant: secondary
+            onClick: exportOrders
+
+      - type: row
+        items:
+          - type: stat
+            label: Today's Orders
+            value: "{stats.todayOrders}"
+          - type: stat
+            label: Pending Fulfillment
+            value: "{stats.pendingFulfillment}"
+          - type: stat
+            label: Today's Revenue
+            value: "${stats.todayRevenue}"
+          - type: stat
+            label: Avg Order Value
+            value: "${stats.avgOrderValue}"
+
+  - main:
+      - type: filter-bar
+        items:
+          - type: search
+            placeholder: Search by order # or customer...
+          - type: select
+            label: Status
+            options:
+              - All Orders
+              - Pending
+              - Processing
+              - Shipped
+              - Delivered
+              - Cancelled
+          - type: select
+            label: Payment
+            options:
+              - All Payments
+              - Paid
+              - Pending
+              - Refunded
+          - type: date-picker
+            label: Date Range
+
+      - type: table
+        source: orders
+        columns:
+          - key: orderNumber
+            label: Order #
+            sortable: true
+          - key: customerName
+            label: Customer
+          - key: customerEmail
+            label: Email
+          - key: date
+            label: Date
+            format: date
+            sortable: true
+          - key: items
+            label: Items
+            format: number
+          - key: total
+            label: Total
+            format: currency
+            sortable: true
+          - key: paymentStatus
+            label: Payment
+            format: badge
+          - key: fulfillmentStatus
+            label: Fulfillment
+            format: badge
+          - key: actions
+            label: Actions
+            format: actions
+
+      - type: pagination
+        value: "{orders.currentPage}"
+
+modals:
+  orderDetail:
+    title: "Order #{order.orderNumber}"
+    size: lg
+    content:
+      - type: row
+        items:
+          - type: badge
+            label: "{order.fulfillmentStatus}"
+          - type: badge
+            label: "{order.paymentStatus}"
+
+      - type: divider
+
+      - type: row
+        items:
+          - type: column
+            items:
+              - type: heading
+                level: 3
+                label: Customer
+              - type: text
+                value: "{order.customerName}"
+              - type: text
+                value: "{order.customerEmail}"
+              - type: text
+                value: "{order.customerPhone}"
+
+          - type: column
+            items:
+              - type: heading
+                level: 3
+                label: Shipping Address
+              - type: text
+                value: "{order.shippingAddress.name}"
+              - type: text
+                value: "{order.shippingAddress.street}"
+              - type: text
+                value: "{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zip}"
+
+      - type: divider
+
+      - type: heading
+        level: 3
+        label: Order Items
+
+      - type: list
+        source: order.items
+        repeat: item
+        items:
+          - type: row
+            items:
+              - type: image
+                value: "{item.imageUrl}"
+                size: xs
+              - type: column
+                items:
+                  - type: text
+                    value: "{item.name}"
+                  - type: text
+                    value: "{item.variant}"
+                    condition: "{item.hasVariant}"
+              - type: text
+                value: "x{item.quantity}"
+              - type: text
+                value: "${item.subtotal}"
+
+      - type: divider
+
+      - type: row
+        items:
+          - type: text
+            value: Subtotal
+          - type: text
+            value: "${order.subtotal}"
+
+      - type: row
+        items:
+          - type: text
+            value: Shipping
+          - type: text
+            value: "${order.shipping}"
+
+      - type: row
+        items:
+          - type: text
+            value: Tax
+          - type: text
+            value: "${order.tax}"
+
+      - type: row
+        condition: "{order.hasDiscount}"
+        items:
+          - type: text
+            value: Discount
+          - type: text
+            value: "-${order.discount}"
+
+      - type: row
+        items:
+          - type: heading
+            level: 3
+            label: Total
+          - type: heading
+            level: 3
+            label: "${order.total}"
+
+      - type: divider
+
+      - type: select
+        label: Update Fulfillment Status
+        options:
+          - Pending
+          - Processing
+          - Shipped
+          - Delivered
+          - Cancelled
+
+      - type: input
+        label: Tracking Number
+        placeholder: Enter tracking number
+        condition: "{order.fulfillmentStatus === 'Shipped'}"
+
+    actions:
+      - type: button
+        label: Close
+        variant: ghost
+        onClick: closeModal
+      - type: button
+        label: Refund Order
+        variant: danger
+        onClick: openModal:confirmRefund
+        condition: "{order.paymentStatus === 'Paid'}"
+      - type: button
+        label: Update Status
+        variant: primary
+        onClick: submit
+
+  confirmRefund:
+    title: Confirm Refund
+    size: sm
+    content:
+      - type: text
+        value: "Are you sure you want to refund order #{order.orderNumber} for ${order.total}?"
+      - type: text
+        value: This action cannot be undone.
+    actions:
+      - type: button
+        label: Cancel
+        variant: ghost
+        onClick: closeModal
+      - type: button
+        label: Process Refund
+        variant: danger
+        onClick: processRefund
+
+flows:
+  view-order:
+    trigger: order-row-click
+    to: /admin/orders/{order.id}
+
+  export-orders:
+    trigger: export-button
+    to: /admin/orders/export

@@ -1,0 +1,83 @@
+# yaml-language-server: $schema=../schemas/ui-layout.schema.json
+
+layout: dashboard
+description: Authenticated user dashboard layout with navigation header and comprehensive footer
+
+header:
+  - logo
+  - type: nav
+    items:
+      - type: link
+        label: Shop
+        action: /products
+      - type: link
+        label: My Orders
+        action: /account/orders
+      - type: link
+        label: Account
+        action: /account
+  - cart-icon
+  - user-menu
+
+footer:
+  - type: row
+    items:
+      - type: column
+        label: Shop
+        items:
+          - type: link
+            label: All Products
+            action: /products
+          - type: link
+            label: New Arrivals
+            action: /products?sort=newest
+          - type: link
+            label: Sale
+            action: /products?filter=sale
+
+      - type: column
+        label: Account
+        items:
+          - type: link
+            label: My Orders
+            action: /account/orders
+          - type: link
+            label: Wishlist
+            action: /account/wishlist
+          - type: link
+            label: Addresses
+            action: /account/addresses
+
+      - type: column
+        label: Support
+        items:
+          - type: link
+            label: Help Center
+            action: /help
+          - type: link
+            label: Shipping Info
+            action: /shipping
+          - type: link
+            label: Returns
+            action: /returns
+
+      - type: column
+        label: Legal
+        items:
+          - type: link
+            label: Privacy Policy
+            action: /privacy
+          - type: link
+            label: Terms of Service
+            action: /terms
+
+  - type: row
+    items:
+      - logo
+      - type: text
+        value: "© 2025 Your Store. All rights reserved."
+
+wrapper:
+  maxWidth: xl
+  padding: md
+  centered: true

@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../schemas/ui-layout.schema.json
+
+layout: full-width
+description: Full-width layout for content that needs maximum horizontal space (grids, tables)
+
+header:
+  - logo
+  - type: nav
+    items:
+      - type: link
+        label: Dashboard
+        action: /dashboard
+        condition: "{user.isAuthenticated}"
+      - type: link
+        label: Browse Games
+        action: /games
+  - user-menu
+
+wrapper:
+  maxWidth: full
+  padding: sm
+  centered: false

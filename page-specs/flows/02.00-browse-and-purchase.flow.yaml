@@ -1,0 +1,141 @@
+# yaml-language-server: $schema=../schemas/ui-flow.schema.json
+
+flow: Browse and Purchase
+goal: Find products, add to cart, and complete a purchase
+
+actor: Any user (guest or authenticated)
+
+preconditions:
+  - Products are available in the catalog
+  - Store is operational and accepting orders
+
+steps:
+  - step: 1
+    page: /
+    description: Customer arrives at the store
+    system-response: Displays homepage with featured products and categories
+    user-action: Browses featured products or clicks a category
+
+  - step: 2
+    page: /products
+    description: Customer browses product catalog
+    system-response: Shows filterable, searchable product grid with pagination
+    user-action: Applies filters (category, price, on-sale) or searches for products
+    data:
+      filters: "Selected category, price range, sale items"
+      sort: "Sort order (featured, price, newest)"
+
+  - step: 3
+    page: /products/{productId}
+    description: Customer views product details
+    user-action: Clicks on a product card
+    system-response: Shows full product information, images, reviews, and options
+
+  - step: 4
+    page: /products/{productId}
+    description: Customer configures and adds product to cart
+    user-action: Selects size/color (if applicable), sets quantity, clicks "Add to Cart"
+    system-response: Product added to cart, shows confirmation, updates cart count
+    decision:
+      condition: Continue shopping or checkout?
+      branches:
+        - when: Continue shopping
+          then: Return to step 2 or 3
+        - when: Proceed to cart
+          then: Continue to step 5
+
+  - step: 5
+    page: /cart
+    description: Customer reviews shopping cart
+    user-action: Reviews items, adjusts quantities, applies promo code
+    system-response: Shows cart contents, calculates totals, validates promo codes
+    data:
+      promoCode: "Optional discount code"
+
+  - step: 6
+    page: /checkout
+    description: Customer enters contact and shipping information
+    user-action: Fills in email, shipping address, selects shipping method
+    system-response: Validates address, calculates shipping cost
+    data:
+      email: "Contact email"
+      shippingAddress: "Full shipping address"
+      shippingMethod: "Selected shipping speed"
+
+  - step: 7
+    page: /checkout
+    description: Customer enters payment information
+    user-action: Enters credit card details or selects saved payment method
+    system-response: Validates payment information securely
+
+  - step: 8
+    page: /checkout
+    description: Customer reviews and places order
+    user-action: Reviews order summary, clicks "Place Order"
+    system-response: Processes payment, creates order, sends confirmation email
+    decision:
+      condition: Payment result
+      branches:
+        - when: Payment declined
+          then: Show error, return to payment step
+        - when: Payment successful
+          then: Continue to step 9
+
+  - step: 9
+    page: /orders/{orderId}/confirmation
+    description: Order confirmation displayed
+    system-response: Shows order confirmation with details and tracking info
+
+outcome: Customer has successfully purchased products and will receive order confirmation and shipping updates
+
+alternate-flows:
+  - name: Guest Checkout
+    trigger: User is not logged in at checkout
+    steps:
+      - step: 1
+        page: /checkout
+        description: System allows guest checkout
+        system-response: Shows email field for guest, optional account creation
+        user-action: Enters email address
+    rejoins: step 6
+
+  - name: Quick Buy
+    trigger: User clicks "Buy Now" on product page
+    steps:
+      - step: 1
+        page: /products/{productId}
+        description: User initiates quick purchase
+        user-action: Clicks "Buy Now" instead of "Add to Cart"
+        system-response: Adds item to cart and redirects directly to checkout
+    rejoins: step 6
+
+  - name: Apply Promo Code
+    trigger: User has a discount code
+    steps:
+      - step: 1
+        page: /cart
+        description: User applies promotional code
+        user-action: Enters promo code, clicks "Apply"
+        system-response: Validates code, applies discount to order total
+    rejoins: step 5
+
+error-flows:
+  - name: Out of Stock
+    trigger: Product becomes unavailable during checkout
+    handling: Show stock error, remove item from cart, suggest alternatives
+    recovery: User removes unavailable item or finds substitute
+
+  - name: Payment Declined
+    trigger: Payment cannot be processed
+    handling: Display payment error with reason (if available)
+    recovery: User tries different payment method or corrects card info
+
+  - name: Invalid Address
+    trigger: Shipping address cannot be validated
+    handling: Show address validation errors
+    recovery: User corrects address or confirms it's correct
+
+  - name: Session Expired
+    trigger: User session times out during checkout
+    handling: Cart is preserved, user prompted to continue
+    recovery: User refreshes page and continues checkout

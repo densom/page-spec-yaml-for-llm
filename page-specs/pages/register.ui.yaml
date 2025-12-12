@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=../schemas/ui-spec.schema.json
+
+page: Register
+route: /register
+purpose: Create a new user account to start shopping
+auth: public
+layout: centered
+
+sections:
+  - main:
+      - type: card
+        items:
+          - type: heading
+            level: 1
+            label: Create an Account
+
+          - type: text
+            value: Join us to enjoy exclusive deals, faster checkout, and order tracking
+
+          - type: form
+            fields:
+              - name: firstName
+                type: text
+                label: First Name
+                placeholder: John
+                required: true
+              - name: lastName
+                type: text
+                label: Last Name
+                placeholder: Doe
+                required: true
+              - name: email
+                type: email
+                label: Email Address
+                placeholder: you@example.com
+                required: true
+              - name: password
+                type: password
+                label: Password
+                placeholder: Create a strong password
+                required: true
+                validation: "Minimum 8 characters"
+              - name: confirmPassword
+                type: password
+                label: Confirm Password
+                placeholder: Confirm your password
+                required: true
+
+          - type: checkbox
+            label: I agree to the Terms of Service and Privacy Policy
+            required: true
+
+          - type: checkbox
+            label: Subscribe to our newsletter for exclusive deals
+
+          - type: button
+            label: Create Account
+            variant: primary
+            size: lg
+            onClick: submit
+
+          - type: divider
+
+          - type: text
+            value: Or sign up with
+
+          - type: row
+            items:
+              - type: button
+                label: Google
+                variant: secondary
+                onClick: signUpWithGoogle
+              - type: button
+                label: Apple
+                variant: secondary
+                onClick: signUpWithApple
+
+          - type: divider
+
+          - type: row
+            items:
+              - type: text
+                value: Already have an account?
+              - type: link
+                label: Sign in
+                action: /login
+
+flows:
+  register-success:
+    trigger: form-submit
+    to: /account
+    condition: "{auth.success}"
+
+  login:
+    trigger: sign-in-link
+    to: /login

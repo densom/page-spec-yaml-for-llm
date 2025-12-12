@@ -1,0 +1,153 @@
+# yaml-language-server: $schema=../schemas/ui-flow.schema.json
+
+flow: Admin Order Fulfillment
+goal: Process and fulfill customer orders from receipt to delivery
+
+actor: Store administrator
+
+preconditions:
+  - User has admin privileges
+  - User is logged in as admin
+  - Orders exist that need processing
+
+steps:
+  - step: 1
+    page: /admin/orders
+    description: Admin accesses order management
+    system-response: Shows order list with stats (today's orders, pending fulfillment, revenue)
+    user-action: Reviews pending orders
+
+  - step: 2
+    page: /admin/orders
+    description: Admin filters for actionable orders
+    user-action: Filters by "Pending" or "Processing" status
+    system-response: Shows orders ready for fulfillment
+    data:
+      statusFilter: "Pending, Processing, Shipped, Delivered, Cancelled"
+      dateRange: "Date range filter"
+
+  - step: 3
+    page: /admin/orders
+    description: Admin selects an order to process
+    user-action: Clicks on an order row
+    system-response: Opens order detail modal with full information
+
+  - step: 4
+    page: /admin/orders
+    description: Admin reviews order details
+    system-response: Shows customer info, shipping address, items, and totals
+    user-action: Verifies order accuracy and item availability
+    data:
+      customerName: "Customer's name"
+      customerEmail: "Customer's email"
+      shippingAddress: "Delivery address"
+      items: "Ordered products with quantities"
+      total: "Order total"
+
+  - step: 5
+    page: /admin/orders
+    description: Admin updates order status to Processing
+    user-action: Changes status dropdown to "Processing"
+    system-response: Updates status, notifies customer via email
+    notes: This indicates order is being prepared for shipment
+
+  - step: 6
+    page: /admin/orders
+    description: Admin prepares shipment
+    user-action: Prints packing slip, prepares items
+    system-response: Generates packing slip (external action)
+    notes: Physical fulfillment step
+
+  - step: 7
+    page: /admin/orders
+    description: Admin marks order as shipped
+    user-action: Changes status to "Shipped", enters tracking number
+    system-response: Updates status, sends shipping notification with tracking to customer
+    data:
+      trackingNumber: "Carrier tracking number"
+      carrier: "Shipping carrier (UPS, FedEx, USPS)"
+
+  - step: 8
+    page: /admin/orders
+    description: Order is delivered
+    user-action: Marks as "Delivered" (or auto-updated by carrier integration)
+    system-response: Updates status, sends delivery confirmation to customer
+
+outcome: Order is fulfilled and delivered to customer with full tracking visibility
+
+alternate-flows:
+  - name: Process Refund
+    trigger: Customer requests refund or order issue
+    steps:
+      - step: 1
+        page: /admin/orders
+        description: Admin initiates refund
+        user-action: Clicks "Refund Order" in order detail
+        system-response: Shows refund confirmation dialog
+      - step: 2
+        page: /admin/orders
+        description: Admin confirms refund
+        user-action: Confirms refund amount and reason
+        system-response: Processes refund through payment provider, updates order status
+    rejoins: end
+
+  - name: Cancel Order
+    trigger: Order needs to be cancelled (customer request or inventory issue)
+    steps:
+      - step: 1
+        page: /admin/orders
+        description: Admin cancels order
+        user-action: Changes status to "Cancelled"
+        system-response: Shows cancellation confirmation
+      - step: 2
+        page: /admin/orders
+        description: Admin confirms cancellation
+        user-action: Confirms and selects reason
+        system-response: Cancels order, processes refund if paid, notifies customer
+    rejoins: end
+
+  - name: Partial Shipment
+    trigger: Not all items available for immediate shipment
+    steps:
+      - step: 1
+        page: /admin/orders
+        description: Admin ships available items
+        user-action: Selects items to ship, enters tracking
+        system-response: Creates partial shipment, notifies customer
+      - step: 2
+        page: /admin/orders
+        description: Admin ships remaining items later
+        user-action: Ships backorder when available
+        system-response: Updates order with additional tracking
+    rejoins: step 8
+
+  - name: Bulk Fulfillment
+    trigger: Multiple orders ready to ship
+    steps:
+      - step: 1
+        page: /admin/orders
+        description: Admin selects multiple orders
+        user-action: Checks boxes next to multiple orders
+        system-response: Shows bulk action options
+      - step: 2
+        page: /admin/orders
+        description: Admin prints batch packing slips
+        user-action: Clicks "Print Packing Slips"
+        system-response: Generates PDF with all selected orders
+    rejoins: step 6
+
+error-flows:
+  - name: Payment Refund Failed
+    trigger: Refund cannot be processed
+    handling: Display error from payment provider
+    recovery: Admin contacts payment provider or processes manual refund
+
+  - name: Invalid Tracking Number
+    trigger: Tracking number format incorrect
+    handling: Display validation error
+    recovery: Admin enters correct tracking number format
+
+  - name: Address Issue
+    trigger: Shipping address is undeliverable
+    handling: Flag order, notify admin
+    recovery: Admin contacts customer to verify/update address

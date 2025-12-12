@@ -1,0 +1,95 @@
+# yaml-language-server: $schema=../schemas/ui-flow.schema.json
+
+flow: Order Management
+goal: Track, view, and manage placed orders
+
+actor: Authenticated customer
+
+preconditions:
+  - User has an account
+  - User is logged in
+  - User has placed at least one order
+
+steps:
+  - step: 1
+    page: /account
+    description: Customer accesses account dashboard
+    system-response: Shows account overview with recent orders summary
+    user-action: Clicks "View All Orders" or a specific order
+
+  - step: 2
+    page: /account/orders
+    description: Customer views complete order history
+    system-response: Lists all orders with status badges, dates, and totals
+    user-action: Clicks on an order to view details
+    data:
+      filters: "Status filter (All, Processing, Shipped, Delivered)"
+
+  - step: 3
+    page: /account/orders/{orderId}
+    description: Customer views detailed order information
+    system-response: Shows complete order details including items, shipping, and tracking
+    data:
+      orderNumber: "Unique order identifier"
+      trackingNumber: "Shipping carrier tracking number"
+      estimatedDelivery: "Expected delivery date"
+
+  - step: 4
+    page: /account/orders/{orderId}
+    description: Customer tracks shipment
+    user-action: Clicks tracking number or "Track Package"
+    system-response: Opens carrier tracking page or shows embedded tracking info
+    condition: "{order.status === 'Shipped'}"
+
+outcome: Customer can monitor their order status and track shipments
+
+alternate-flows:
+  - name: Request Return
+    trigger: Customer wants to return an item
+    steps:
+      - step: 1
+        page: /account/orders/{orderId}
+        description: Customer initiates return request
+        user-action: Clicks "Request Return" on an item
+        system-response: Opens return request modal
+      - step: 2
+        page: /account/orders/{orderId}
+        description: Customer selects return reason
+        user-action: Selects reason from dropdown, adds optional comments
+        system-response: Submits return request, shows return instructions
+    rejoins: end
+
+  - name: Reorder
+    trigger: Customer wants to purchase same items again
+    steps:
+      - step: 1
+        page: /account/orders/{orderId}
+        description: Customer initiates reorder
+        user-action: Clicks "Reorder" or "Buy Again"
+        system-response: Adds same items to cart
+      - step: 2
+        page: /cart
+        description: Items added to cart
+        system-response: Shows cart with reordered items
+    rejoins: end
+
+  - name: Contact Support
+    trigger: Customer has issue with order
+    steps:
+      - step: 1
+        page: /account/orders/{orderId}
+        description: Customer seeks help
+        user-action: Clicks "Need Help?" or "Contact Support"
+        system-response: Opens support chat or contact form with order context
+    rejoins: end
+
+error-flows:
+  - name: Order Not Found
+    trigger: Invalid order ID or order doesn't belong to user
+    handling: Display error message, redirect to order history
+    recovery: User navigates to correct order from history list
+
+  - name: Return Window Expired
+    trigger: Return request submitted after return window
+    handling: Display message explaining return policy
+    recovery: User contacts customer support for exceptions

@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../schemas/ui-layout.schema.json
+
+layout: default
+description: Standard authenticated user layout with navigation header
+
+header:
+  - logo
+  - type: nav
+    items:
+      - type: link
+        label: Dashboard
+        action: /dashboard
+      - type: link
+        label: Browse Games
+        action: /games
+  - user-menu
+
+wrapper:
+  maxWidth: xl
+  padding: md
+  centered: true

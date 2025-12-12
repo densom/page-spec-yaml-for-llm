@@ -1,0 +1,128 @@
+# yaml-language-server: $schema=../schemas/ui-spec.schema.json
+
+page: Order Confirmation
+route: /orders/{orderId}/confirmation
+purpose: Confirm successful order placement and provide order details
+auth: public
+layout: centered
+
+sections:
+  - main:
+      - type: card
+        items:
+          - type: icon
+            label: check-circle
+            variant: success
+            size: xl
+
+          - type: heading
+            level: 1
+            label: Thank You for Your Order!
+
+          - type: text
+            value: "Order #{order.orderNumber}"
+
+          - type: text
+            value: "We've sent a confirmation email to {order.email}"
+
+          - type: divider
+
+          - type: heading
+            level: 2
+            label: Order Summary
+
+          - type: list
+            source: order.items
+            repeat: item
+            items:
+              - type: row
+                items:
+                  - type: image
+                    value: "{item.imageUrl}"
+                    size: xs
+                  - type: column
+                    items:
+                      - type: text
+                        value: "{item.name}"
+                      - type: text
+                        value: "Qty: {item.quantity}"
+                  - type: text
+                    value: "${item.subtotal}"
+
+          - type: divider
+
+          - type: row
+            items:
+              - type: text
+                value: Subtotal
+              - type: text
+                value: "${order.subtotal}"
+
+          - type: row
+            items:
+              - type: text
+                value: Shipping
+              - type: text
+                value: "${order.shipping}"
+
+          - type: row
+            items:
+              - type: text
+                value: Tax
+              - type: text
+                value: "${order.tax}"
+
+          - type: row
+            items:
+              - type: heading
+                level: 3
+                label: Total
+              - type: heading
+                level: 3
+                label: "${order.total}"
+
+          - type: divider
+
+          - type: row
+            items:
+              - type: column
+                items:
+                  - type: heading
+                    level: 3
+                    label: Shipping Address
+                  - type: text
+                    value: "{order.shippingAddress.name}"
+                  - type: text
+                    value: "{order.shippingAddress.street}"
+                  - type: text
+                    value: "{order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zip}"
+
+              - type: column
+                items:
+                  - type: heading
+                    level: 3
+                    label: Estimated Delivery
+                  - type: text
+                    value: "{order.estimatedDelivery}"
+
+          - type: divider
+
+          - type: row
+            items:
+              - type: button
+                label: Track Order
+                variant: primary
+                action: /account/orders/{order.id}
+              - type: button
+                label: Continue Shopping
+                variant: secondary
+                action: /products
+
+flows:
+  track-order:
+    trigger: track-order-button
+    to: /account/orders/{order.id}
+
+  continue-shopping:
+    trigger: continue-shopping-button
+    to: /products

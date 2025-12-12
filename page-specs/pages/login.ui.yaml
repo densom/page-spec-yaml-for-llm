@@ -1,0 +1,85 @@
+# yaml-language-server: $schema=../schemas/ui-spec.schema.json
+
+page: Login
+route: /login
+purpose: Authenticate existing users to access their account
+auth: public
+layout: centered
+
+sections:
+  - main:
+      - type: card
+        items:
+          - type: heading
+            level: 1
+            label: Welcome Back
+
+          - type: text
+            value: Sign in to your account to continue shopping
+
+          - type: form
+            fields:
+              - name: email
+                type: email
+                label: Email Address
+                placeholder: you@example.com
+                required: true
+              - name: password
+                type: password
+                label: Password
+                placeholder: Enter your password
+                required: true
+
+          - type: row
+            items:
+              - type: checkbox
+                label: Remember me
+              - type: link
+                label: Forgot password?
+                action: /forgot-password
+
+          - type: button
+            label: Sign In
+            variant: primary
+            size: lg
+            onClick: submit
+
+          - type: divider
+
+          - type: text
+            value: Or continue with
+
+          - type: row
+            items:
+              - type: button
+                label: Google
+                variant: secondary
+                onClick: signInWithGoogle
+              - type: button
+                label: Apple
+                variant: secondary
+                onClick: signInWithApple
+
+          - type: divider
+
+          - type: row
+            items:
+              - type: text
+                value: Don't have an account?
+              - type: link
+                label: Sign up
+                action: /register
+
+flows:
+  login-success:
+    trigger: form-submit
+    to: /account
+    condition: "{auth.success}"
+
+  register:
+    trigger: sign-up-link
+    to: /register
+
+  forgot-password:
+    trigger: forgot-password-link
+    to: /forgot-password

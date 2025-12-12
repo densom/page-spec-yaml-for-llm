@@ -1,0 +1,254 @@
+# yaml-language-server: $schema=../schemas/ui-spec.schema.json
+
+page: Product Detail
+route: /products/{productId}
+purpose: View detailed product information, images, reviews, and add to cart
+auth: public
+layout: default
+
+sections:
+  - breadcrumb:
+      - type: breadcrumb
+        items:
+          - type: link
+            label: Home
+            action: /
+          - type: link
+            label: Products
+            action: /products
+          - type: link
+            label: "{product.category}"
+            action: /products?category={product.categorySlug}
+          - type: text
+            value: "{product.name}"
+
+  - product-main:
+      - type: row
+        items:
+          - type: column
+            items:
+              - type: image
+                value: "{product.imageUrl}"
+                size: lg
+              - type: row
+                items:
+                  - type: image
+                    value: "{product.thumbnail1}"
+                    size: sm
+                  - type: image
+                    value: "{product.thumbnail2}"
+                    size: sm
+                  - type: image
+                    value: "{product.thumbnail3}"
+                    size: sm
+
+          - type: column
+            items:
+              - type: badge
+                label: "Sale - {product.discountPercent}% Off"
+                variant: danger
+                condition: "{product.onSale}"
+
+              - type: heading
+                level: 1
+                label: "{product.name}"
+
+              - type: row
+                items:
+                  - type: text
+                    value: "{product.averageRating}/5"
+                  - type: link
+                    label: "{product.reviewCount} reviews"
+                    action: "#reviews"
+
+              - type: row
+                items:
+                  - type: heading
+                    level: 2
+                    label: "${product.price}"
+                  - type: text
+                    value: "${product.originalPrice}"
+                    condition: "{product.onSale}"
+
+              - type: text
+                value: "{product.description}"
+
+              - type: divider
+
+              - type: select
+                label: Size
+                source: product.availableSizes
+                condition: "{product.hasSizes}"
+
+              - type: select
+                label: Color
+                source: product.availableColors
+                condition: "{product.hasColors}"
+
+              - type: row
+                items:
+                  - type: input
+                    label: Quantity
+                    value: "1"
+
+              - type: row
+                items:
+                  - type: button
+                    label: Add to Cart
+                    variant: primary
+                    size: lg
+                    onClick: addToCart
+                  - type: button
+                    label: Add to Wishlist
+                    variant: secondary
+                    onClick: addToWishlist
+
+              - type: divider
+
+              - type: row
+                items:
+                  - type: icon
+                    label: truck
+                  - type: text
+                    value: Free shipping on orders over $50
+
+              - type: row
+                items:
+                  - type: icon
+                    label: refresh
+                  - type: text
+                    value: 30-day return policy
+
+              - type: row
+                items:
+                  - type: icon
+                    label: shield
+                  - type: text
+                    value: "In Stock: {product.stockCount} available"
+
+  - product-details:
+      - type: tabs
+        items:
+          - type: card
+            label: Description
+            items:
+              - type: paragraph
+                value: "{product.fullDescription}"
+
+          - type: card
+            label: Specifications
+            items:
+              - type: table
+                source: product.specifications
+                columns:
+                  - key: name
+                    label: Specification
+                  - key: value
+                    label: Value
+
+          - type: card
+            id: reviews
+            label: "Reviews ({product.reviewCount})"
+            items:
+              - type: row
+                items:
+                  - type: stat
+                    label: Average Rating
+                    value: "{product.averageRating}/5"
+                  - type: button
+                    label: Write a Review
+                    variant: secondary
+                    onClick: openModal:writeReview
+
+              - type: list
+                source: product.reviews
+                repeat: review
+                empty: No reviews yet. Be the first to review this product!
+                items:
+                  - type: card
+                    items:
+                      - type: row
+                        items:
+                          - type: avatar
+                            value: "{review.userAvatar}"
+                          - type: column
+                            items:
+                              - type: text
+                                value: "{review.userName}"
+                              - type: badge
+                                label: "{review.rating}/5"
+                      - type: text
+                        value: "{review.title}"
+                      - type: paragraph
+                        value: "{review.comment}"
+                      - type: text
+                        value: "{review.date}"
+
+  - related-products:
+      - type: heading
+        level: 2
+        label: You Might Also Like
+
+      - type: list
+        source: relatedProducts
+        repeat: product
+        items:
+          - type: card
+            items:
+              - type: image
+                value: "{product.imageUrl}"
+              - type: heading
+                level: 3
+                label: "{product.name}"
+              - type: text
+                value: "${product.price}"
+              - type: button
+                label: View Details
+                variant: secondary
+                action: /products/{product.id}
+
+modals:
+  writeReview:
+    title: Write a Review
+    size: md
+    content:
+      - type: form
+        fields:
+          - name: rating
+            type: select
+            label: Rating
+            options:
+              - "5 - Excellent"
+              - "4 - Good"
+              - "3 - Average"
+              - "2 - Below Average"
+              - "1 - Poor"
+            required: true
+          - name: title
+            type: text
+            label: Review Title
+            placeholder: Summarize your experience
+            required: true
+          - name: comment
+            type: textarea
+            label: Your Review
+            placeholder: Tell others what you think about this product
+            required: true
+    actions:
+      - type: button
+        label: Cancel
+        variant: ghost
+        onClick: closeModal
+      - type: button
+        label: Submit Review
+        variant: primary
+        onClick: submit
+
+flows:
+  add-to-cart:
+    trigger: add-to-cart-button
+    to: /cart
+
+  view-related:
+    trigger: related-product-click
+    to: /products/{product.id}

@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../schemas/ui-layout.schema.json
+
+layout: centered
+description: Centered content layout for auth pages (login, register, checkout) with minimal navigation
+
+header:
+  - logo
+  - type: nav
+    items:
+      - type: link
+        label: Home
+        action: /
+      - type: link
+        label: Shop
+        action: /products
+
+wrapper:
+  maxWidth: md
+  padding: lg
+  centered: true

@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../schemas/ui-layout.schema.json
+
+layout: admin
+description: Admin dashboard layout with store management navigation
+
+header:
+  - logo
+  - type: nav
+    items:
+      - type: link
+        label: Dashboard
+        action: /admin
+      - type: link
+        label: Products
+        action: /admin/products
+      - type: link
+        label: Orders
+        action: /admin/orders
+      - type: link
+        label: Customers
+        action: /admin/customers
+      - type: link
+        label: Analytics
+        action: /admin/analytics
+  - user-menu
+
+footer:
+  - type: row
+    items:
+      - type: text
+        value: "Admin Panel"
+      - type: link
+        label: View Store
+        action: /
+      - type: link
+        label: Documentation
+        action: /admin/docs
+      - type: link
+        label: Support
+        action: /admin/support
+
+wrapper:
+  maxWidth: xl
+  padding: md
+  centered: true

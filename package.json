@@ -1,0 +1,17 @@
+{
+  "name": "page-spec-yaml-for-llm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "docs": "pnpm dlx serve ./page-specs",
+    "lint": "pnpm run --parallel --aggregate-output \"/^lint:/\"",
+    "lint:pages": "pnpm dlx ajv-cli validate -s page-specs/schemas/ui-spec.schema.json -d \"page-specs/pages/*.ui.yaml\" --spec=draft7",
+    "lint:flows": "pnpm dlx ajv-cli validate -s page-specs/schemas/ui-flow.schema.json -d \"page-specs/flows/*.flow.yaml\" --spec=draft7",
+    "lint:layouts": "pnpm dlx ajv-cli validate -s page-specs/schemas/ui-layout.schema.json -r page-specs/schemas/ui-spec.schema.json -d \"page-specs/layouts/*.layout.yaml\" --spec=draft7"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.23.0"
+}

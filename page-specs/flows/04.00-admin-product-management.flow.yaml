@@ -1,0 +1,132 @@
+# yaml-language-server: $schema=../schemas/ui-flow.schema.json
+
+flow: Admin Product Management
+goal: Add, edit, and manage products in the catalog
+
+actor: Store administrator
+
+preconditions:
+  - User has admin privileges
+  - User is logged in as admin
+
+steps:
+  - step: 1
+    page: /admin/products
+    description: Admin accesses product management
+    system-response: Shows product list with stats (total, active, out of stock)
+    user-action: Reviews current product inventory
+
+  - step: 2
+    page: /admin/products
+    description: Admin searches or filters products
+    user-action: Uses search bar, category filter, or status filter
+    system-response: Updates product list to match criteria
+    data:
+      searchQuery: "Product name or SKU search"
+      categoryFilter: "Category to filter by"
+      statusFilter: "Active, Draft, Out of Stock"
+
+  - step: 3
+    page: /admin/products
+    description: Admin adds a new product
+    user-action: Clicks "Add Product" button
+    system-response: Opens add product modal with form fields
+    decision:
+      condition: Adding or editing?
+      branches:
+        - when: Adding new product
+          then: Continue to step 4
+        - when: Editing existing product
+          then: Go to step 5
+
+  - step: 4
+    page: /admin/products
+    description: Admin fills out new product details
+    user-action: Enters product name, description, price, SKU, stock, uploads images
+    system-response: Validates input, shows preview
+    data:
+      name: "Product name"
+      description: "Product description"
+      category: "Product category"
+      price: "Product price"
+      compareAtPrice: "Original price (for sales)"
+      sku: "Stock Keeping Unit"
+      stock: "Available quantity"
+      images: "Product images"
+      status: "Active or Draft"
+
+  - step: 5
+    page: /admin/products
+    description: Admin edits existing product
+    user-action: Clicks edit icon on a product row, then modifies desired fields
+    system-response: Opens edit modal with current product data
+
+  - step: 6
+    page: /admin/products
+    description: Admin saves changes
+    user-action: Clicks "Add Product" or "Save Changes"
+    system-response: Validates and saves product, updates list, shows success message
+
+outcome: Product catalog is updated with new or modified products
+
+alternate-flows:
+  - name: Bulk Status Update
+    trigger: Admin needs to update multiple products
+    steps:
+      - step: 1
+        page: /admin/products
+        description: Admin selects multiple products
+        user-action: Checks boxes next to multiple products
+        system-response: Shows bulk action toolbar
+      - step: 2
+        page: /admin/products
+        description: Admin applies bulk action
+        user-action: Selects action (Set Active, Set Draft, Delete)
+        system-response: Applies action to all selected products
+    rejoins: step 1
+
+  - name: Delete Product
+    trigger: Admin wants to remove a product
+    steps:
+      - step: 1
+        page: /admin/products
+        description: Admin initiates deletion
+        user-action: Clicks delete icon or button
+        system-response: Shows confirmation dialog
+      - step: 2
+        page: /admin/products
+        description: Admin confirms deletion
+        user-action: Clicks "Delete" in confirmation modal
+        system-response: Removes product, updates list
+    rejoins: step 1
+
+  - name: Duplicate Product
+    trigger: Admin wants to create similar product
+    steps:
+      - step: 1
+        page: /admin/products
+        description: Admin duplicates product
+        user-action: Clicks duplicate option on product row
+        system-response: Creates copy with "(Copy)" suffix, opens edit modal
+    rejoins: step 5
+
+error-flows:
+  - name: SKU Already Exists
+    trigger: Entered SKU is already in use
+    handling: Display error message on SKU field
+    recovery: Admin enters unique SKU
+
+  - name: Invalid Price
+    trigger: Price format is incorrect
+    handling: Display validation error
+    recovery: Admin corrects price format
+
+  - name: Missing Required Fields
+    trigger: Required fields not filled
+    handling: Highlight missing fields with error messages
+    recovery: Admin fills in required information
+
+  - name: Image Upload Failed
+    trigger: Image file too large or wrong format
+    handling: Show file requirements and error
+    recovery: Admin uploads correct image format/size

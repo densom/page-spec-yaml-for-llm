@@ -1,0 +1,203 @@
+# yaml-language-server: $schema=../schemas/ui-spec.schema.json
+
+page: Home
+route: /
+purpose: Public landing page showcasing products and converting visitors to customers
+auth: public
+layout: marketing
+
+sections:
+  - hero:
+      - type: badge
+        label: Free Shipping on Orders $50+
+        variant: success
+
+      - type: heading
+        level: 1
+        label: Discover Quality Products You'll Love
+
+      - type: text
+        value: Shop our curated collection of premium products with fast shipping, easy returns, and exceptional customer service.
+
+      - type: row
+        items:
+          - type: button
+            label: Shop Now
+            variant: primary
+            size: lg
+            action: /products
+          - type: button
+            label: View Deals
+            variant: secondary
+            size: lg
+            action: /products?filter=sale
+
+      - type: row
+        items:
+          - type: text
+            value: Free shipping
+          - type: text
+            value: 30-day returns
+          - type: text
+            value: Secure checkout
+
+  - featured-categories:
+      - type: heading
+        level: 2
+        label: Shop by Category
+
+      - type: grid
+        items:
+          - type: card
+            items:
+              - type: image
+                value: "{category.electronics.image}"
+              - type: heading
+                level: 3
+                label: Electronics
+              - type: link
+                label: Shop Now
+                action: /products?category=electronics
+
+          - type: card
+            items:
+              - type: image
+                value: "{category.clothing.image}"
+              - type: heading
+                level: 3
+                label: Clothing
+              - type: link
+                label: Shop Now
+                action: /products?category=clothing
+
+          - type: card
+            items:
+              - type: image
+                value: "{category.home.image}"
+              - type: heading
+                level: 3
+                label: Home & Garden
+              - type: link
+                label: Shop Now
+                action: /products?category=home-garden
+
+          - type: card
+            items:
+              - type: image
+                value: "{category.sports.image}"
+              - type: heading
+                level: 3
+                label: Sports
+              - type: link
+                label: Shop Now
+                action: /products?category=sports
+
+  - featured-products:
+      - type: heading
+        level: 2
+        label: Trending Products
+
+      - type: list
+        source: featuredProducts
+        repeat: product
+        items:
+          - type: card
+            items:
+              - type: image
+                value: "{product.imageUrl}"
+              - type: badge
+                label: Sale
+                variant: danger
+                condition: "{product.onSale}"
+              - type: heading
+                level: 3
+                label: "{product.name}"
+              - type: text
+                value: "{product.shortDescription}"
+              - type: row
+                items:
+                  - type: text
+                    value: "${product.price}"
+                  - type: text
+                    value: "${product.originalPrice}"
+                    condition: "{product.onSale}"
+              - type: button
+                label: Add to Cart
+                variant: primary
+                onClick: addToCart
+
+  - value-props:
+      - type: heading
+        level: 2
+        label: Why Shop With Us
+
+      - type: grid
+        items:
+          - type: card
+            items:
+              - type: icon
+                label: truck
+              - type: heading
+                level: 3
+                label: Fast, Free Shipping
+              - type: text
+                value: Free shipping on orders over $50. Most orders arrive in 2-3 business days.
+
+          - type: card
+            items:
+              - type: icon
+                label: refresh
+              - type: heading
+                level: 3
+                label: Easy Returns
+              - type: text
+                value: Not satisfied? Return any item within 30 days for a full refund.
+
+          - type: card
+            items:
+              - type: icon
+                label: shield
+              - type: heading
+                level: 3
+                label: Secure Checkout
+              - type: text
+                value: Your payment information is encrypted and secure.
+
+          - type: card
+            items:
+              - type: icon
+                label: headphones
+              - type: heading
+                level: 3
+                label: 24/7 Support
+              - type: text
+                value: Our customer service team is here to help anytime.
+
+  - newsletter:
+      - type: heading
+        level: 2
+        label: Stay in the Loop
+
+      - type: text
+        value: Subscribe for exclusive deals, new arrivals, and insider-only discounts.
+
+      - type: row
+        items:
+          - type: input
+            placeholder: Enter your email
+          - type: button
+            label: Subscribe
+            variant: primary
+
+flows:
+  shop:
+    trigger: shop-now-button
+    to: /products
+
+  login:
+    trigger: login-link
+    to: /login
+
+  register:
+    trigger: register-link
+    to: /register

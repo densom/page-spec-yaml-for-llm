@@ -1,0 +1,11 @@
+{
+  "yaml.schemas": {
+    "./schemas/ui-spec.schema.json": "**/*.ui.yaml",
+    "./schemas/ui-flow.schema.json": "**/*.flow.yaml",
+    "./schemas/ui-layout.schema.json": "**/*.layout.yaml"
+  },
+  "yaml.validate": true,
+  "yaml.completion": true,
+  "yaml.hover": true,
+  "yaml.format.enable": true
+}

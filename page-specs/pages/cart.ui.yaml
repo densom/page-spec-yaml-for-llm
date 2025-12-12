@@ -1,0 +1,160 @@
+# yaml-language-server: $schema=../schemas/ui-spec.schema.json
+
+page: Shopping Cart
+route: /cart
+purpose: Review cart items, update quantities, and proceed to checkout
+auth: public
+layout: default
+
+sections:
+  - main:
+      - type: breadcrumb
+        items:
+          - type: link
+            label: Home
+            action: /
+          - type: text
+            value: Shopping Cart
+
+      - type: heading
+        level: 1
+        label: Shopping Cart
+
+      - type: text
+        value: "{cart.itemCount} items in your cart"
+
+      - type: row
+        items:
+          - type: column
+            items:
+              - type: list
+                source: cart.items
+                repeat: item
+                items:
+                  - type: card
+                    items:
+                      - type: row
+                        items:
+                          - type: image
+                            value: "{item.imageUrl}"
+                            size: sm
+                          - type: column
+                            items:
+                              - type: heading
+                                level: 3
+                                label: "{item.name}"
+                              - type: text
+                                value: "{item.variant}"
+                                condition: "{item.hasVariant}"
+                              - type: text
+                                value: "${item.price} each"
+                          - type: column
+                            items:
+                              - type: row
+                                items:
+                                  - type: button
+                                    label: "-"
+                                    variant: ghost
+                                    onClick: decrementQuantity
+                                  - type: input
+                                    value: "{item.quantity}"
+                                  - type: button
+                                    label: "+"
+                                    variant: ghost
+                                    onClick: incrementQuantity
+                              - type: text
+                                value: "${item.subtotal}"
+                          - type: button
+                            label: Remove
+                            variant: ghost
+                            onClick: removeItem
+
+              - type: empty-state
+                condition: "{cart.isEmpty}"
+                items:
+                  - type: icon
+                    label: shopping-cart
+                  - type: heading
+                    level: 2
+                    label: Your cart is empty
+                  - type: text
+                    value: Looks like you haven't added anything to your cart yet.
+                  - type: button
+                    label: Start Shopping
+                    variant: primary
+                    action: /products
+
+          - type: column
+            condition: "{!cart.isEmpty}"
+            items:
+              - type: card
+                items:
+                  - type: heading
+                    level: 2
+                    label: Order Summary
+
+                  - type: row
+                    items:
+                      - type: text
+                        value: Subtotal
+                      - type: text
+                        value: "${cart.subtotal}"
+
+                  - type: row
+                    items:
+                      - type: text
+                        value: Shipping
+                      - type: text
+                        value: "${cart.shipping}"
+
+                  - type: row
+                    condition: "{cart.hasDiscount}"
+                    items:
+                      - type: text
+                        value: Discount
+                      - type: text
+                        value: "-${cart.discount}"
+
+                  - type: divider
+
+                  - type: row
+                    items:
+                      - type: heading
+                        level: 3
+                        label: Total
+                      - type: heading
+                        level: 3
+                        label: "${cart.total}"
+
+                  - type: row
+                    items:
+                      - type: input
+                        placeholder: Promo code
+                      - type: button
+                        label: Apply
+                        variant: secondary
+                        onClick: applyPromo
+
+                  - type: button
+                    label: Proceed to Checkout
+                    variant: primary
+                    size: lg
+                    action: /checkout
+
+                  - type: divider
+
+                  - type: row
+                    items:
+                      - type: icon
+                        label: shield
+                      - type: text
+                        value: Secure checkout
+
+flows:
+  checkout:
+    trigger: checkout-button
+    to: /checkout
+
+  continue-shopping:
+    trigger: continue-shopping-button
+    to: /products

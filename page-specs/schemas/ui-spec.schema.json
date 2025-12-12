@@ -1,0 +1,331 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/ui-spec.schema.json",
+  "title": "UI Page Specification",
+  "description": "Low-fidelity semantic UI specification format for describing page structure and user flows",
+  "type": "object",
+  "required": ["page", "route"],
+  "additionalProperties": false,
+  "properties": {
+    "page": {
+      "type": "string",
+      "description": "Human-readable page name"
+    },
+    "route": {
+      "type": "string",
+      "pattern": "^/",
+      "description": "URL route path (must start with /)"
+    },
+    "purpose": {
+      "type": "string",
+      "description": "Brief description of why this page exists and what user goal it serves"
+    },
+    "auth": {
+      "type": "string",
+      "enum": ["public", "authenticated", "admin"],
+      "default": "public",
+      "description": "Authentication level required to access this page"
+    },
+    "layout": {
+      "type": "string",
+      "enum": ["default", "full-width", "centered", "sidebar", "dashboard", "marketing", "admin"],
+      "default": "default",
+      "description": "Page layout template to use"
+    },
+    "sections": {
+      "type": "array",
+      "description": "Ordered list of page sections",
+      "items": { "$ref": "#/$defs/section" }
+    },
+    "flows": {
+      "type": "object",
+      "description": "Named navigation flows from this page",
+      "additionalProperties": { "$ref": "#/$defs/flow" }
+    },
+    "modals": {
+      "type": "object",
+      "description": "Modal dialogs that can appear on this page",
+      "additionalProperties": { "$ref": "#/$defs/modal" }
+    }
+  },
+  "$defs": {
+    "section": {
+      "type": "object",
+      "description": "A logical section of the page (e.g., header, main, sidebar, footer). Use section name as key with array of elements as value.",
+      "minProperties": 1,
+      "maxProperties": 1,
+      "additionalProperties": {
+        "type": "array",
+        "items": { "$ref": "#/$defs/element" }
+      }
+    },
+    "element": {
+      "anyOf": [
+        {
+          "type": "string",
+          "description": "Simple element reference (e.g., 'logo', 'user-menu')"
+        },
+        { "$ref": "#/$defs/component" }
+      ]
+    },
+    "component": {
+      "type": "object",
+      "description": "A UI component with properties",
+      "required": ["type"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "heading",
+            "text",
+            "paragraph",
+            "button",
+            "link",
+            "input",
+            "search",
+            "select",
+            "checkbox",
+            "radio",
+            "toggle",
+            "textarea",
+            "date-picker",
+            "file-upload",
+            "list",
+            "card",
+            "table",
+            "grid",
+            "form",
+            "image",
+            "avatar",
+            "icon",
+            "badge",
+            "tag",
+            "nav",
+            "breadcrumb",
+            "tabs",
+            "accordion",
+            "alert",
+            "toast",
+            "progress",
+            "spinner",
+            "divider",
+            "spacer",
+            "container",
+            "row",
+            "column",
+            "stat",
+            "chart",
+            "empty-state",
+            "skeleton",
+            "pagination",
+            "filter-bar",
+            "action-bar",
+            "toolbar"
+          ],
+          "description": "The semantic type of this component"
+        },
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for referencing in flows"
+        },
+        "label": {
+          "type": "string",
+          "description": "Display text or label"
+        },
+        "placeholder": {
+          "type": "string",
+          "description": "Placeholder text for inputs"
+        },
+        "value": {
+          "type": "string",
+          "description": "Default or dynamic value (use {variable} for bindings)"
+        },
+        "action": {
+          "type": "string",
+          "description": "Navigation action (format: '/route' or '/route/{id}')"
+        },
+        "onClick": {
+          "type": "string",
+          "description": "Action triggered on click (e.g., 'openModal:confirm', 'submit', 'toggle')"
+        },
+        "variant": {
+          "type": "string",
+          "enum": ["primary", "secondary", "danger", "warning", "success", "info", "ghost", "link"],
+          "description": "Visual variant of the component"
+        },
+        "size": {
+          "type": "string",
+          "enum": ["xs", "sm", "md", "lg", "xl"],
+          "description": "Size variant"
+        },
+        "disabled": {
+          "type": "boolean",
+          "description": "Whether the component is disabled"
+        },
+        "required": {
+          "type": "boolean",
+          "description": "Whether the field is required (for form inputs)"
+        },
+        "repeat": {
+          "type": "string",
+          "description": "Iterator variable for repeated content (e.g., 'item' to iterate over items)"
+        },
+        "source": {
+          "type": "string",
+          "description": "Data source for repeated content (e.g., 'items', 'users')"
+        },
+        "empty": {
+          "type": "string",
+          "description": "Message or state to show when list/data is empty"
+        },
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/element" },
+          "description": "Child elements within this component"
+        },
+        "options": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Options for select, radio, or similar components"
+        },
+        "columns": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/tableColumn" },
+          "description": "Column definitions for tables"
+        },
+        "fields": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/formField" },
+          "description": "Field definitions for forms"
+        },
+        "condition": {
+          "type": "string",
+          "description": "Condition for showing this component (e.g., '{user.isAdmin}')"
+        },
+        "level": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 6,
+          "description": "Heading level (1-6) for heading components"
+        }
+      }
+    },
+    "tableColumn": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "key": {
+          "type": "string",
+          "description": "Data field key"
+        },
+        "label": {
+          "type": "string",
+          "description": "Column header label"
+        },
+        "sortable": {
+          "type": "boolean",
+          "description": "Whether column is sortable"
+        },
+        "format": {
+          "type": "string",
+          "enum": ["text", "number", "date", "currency", "badge", "link", "actions"],
+          "description": "Display format for the column"
+        }
+      },
+      "required": ["key", "label"]
+    },
+    "formField": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Field name/key"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["text", "email", "password", "number", "tel", "url", "date", "time", "datetime", "select", "checkbox", "radio", "textarea", "file"],
+          "description": "Input type"
+        },
+        "label": {
+          "type": "string",
+          "description": "Field label"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "options": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "validation": {
+          "type": "string",
+          "description": "Validation rule description"
+        }
+      },
+      "required": ["name", "type", "label"]
+    },
+    "flow": {
+      "type": "object",
+      "description": "A navigation flow from this page",
+      "additionalProperties": false,
+      "properties": {
+        "trigger": {
+          "type": "string",
+          "description": "What triggers this flow (element id or action)"
+        },
+        "to": {
+          "type": "string",
+          "pattern": "^/",
+          "description": "Destination route"
+        },
+        "condition": {
+          "type": "string",
+          "description": "Condition that must be true for this flow"
+        },
+        "data": {
+          "type": "object",
+          "description": "Data passed to the destination",
+          "additionalProperties": { "type": "string" }
+        }
+      },
+      "required": ["to"]
+    },
+    "modal": {
+      "type": "object",
+      "description": "A modal dialog definition",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "Modal title"
+        },
+        "size": {
+          "type": "string",
+          "enum": ["sm", "md", "lg", "xl", "full"],
+          "default": "md"
+        },
+        "content": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/element" },
+          "description": "Modal body content"
+        },
+        "actions": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/element" },
+          "description": "Modal footer actions (buttons)"
+        },
+        "closeable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether modal can be closed by clicking outside or X"
+        }
+      },
+      "required": ["title", "content"]
+    }
+  }
+}

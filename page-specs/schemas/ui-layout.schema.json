@@ -1,0 +1,56 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://example.com/ui-layout.schema.json",
+  "title": "UI Layout Specification",
+  "description": "Layout specification defining shared header, footer, and structural elements for a layout template",
+  "type": "object",
+  "required": ["layout"],
+  "additionalProperties": false,
+  "properties": {
+    "layout": {
+      "type": "string",
+      "enum": ["default", "full-width", "centered", "sidebar", "dashboard", "marketing", "admin"],
+      "description": "Layout identifier matching the layout enum in page specs"
+    },
+    "description": {
+      "type": "string",
+      "description": "Brief description of when to use this layout"
+    },
+    "header": {
+      "type": "array",
+      "description": "Header elements shown at the top of all pages using this layout",
+      "items": { "$ref": "ui-spec.schema.json#/$defs/element" }
+    },
+    "footer": {
+      "type": "array",
+      "description": "Footer elements shown at the bottom of all pages using this layout",
+      "items": { "$ref": "ui-spec.schema.json#/$defs/element" }
+    },
+    "sidebar": {
+      "type": "array",
+      "description": "Sidebar elements for layouts that include a sidebar",
+      "items": { "$ref": "ui-spec.schema.json#/$defs/element" }
+    },
+    "wrapper": {
+      "type": "object",
+      "description": "Container configuration for the main content area",
+      "additionalProperties": false,
+      "properties": {
+        "maxWidth": {
+          "type": "string",
+          "enum": ["sm", "md", "lg", "xl", "2xl", "full"],
+          "description": "Maximum width constraint for main content"
+        },
+        "padding": {
+          "type": "string",
+          "enum": ["none", "sm", "md", "lg"],
+          "description": "Padding around main content"
+        },
+        "centered": {
+          "type": "boolean",
+          "description": "Whether main content should be horizontally centered"
+        }
+      }
+    }
+  }
+}

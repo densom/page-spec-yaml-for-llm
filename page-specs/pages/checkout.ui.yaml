@@ -1,0 +1,210 @@
+# yaml-language-server: $schema=../schemas/ui-spec.schema.json
+
+page: Checkout
+route: /checkout
+purpose: Complete purchase with shipping and payment information
+auth: public
+layout: centered
+
+sections:
+  - main:
+      - type: heading
+        level: 1
+        label: Checkout
+
+      - type: row
+        items:
+          - type: column
+            items:
+              - type: card
+                items:
+                  - type: heading
+                    level: 2
+                    label: "1. Contact Information"
+
+                  - type: form
+                    fields:
+                      - name: email
+                        type: email
+                        label: Email Address
+                        placeholder: you@example.com
+                        required: true
+
+              - type: card
+                items:
+                  - type: heading
+                    level: 2
+                    label: "2. Shipping Address"
+
+                  - type: form
+                    fields:
+                      - name: firstName
+                        type: text
+                        label: First Name
+                        required: true
+                      - name: lastName
+                        type: text
+                        label: Last Name
+                        required: true
+                      - name: address
+                        type: text
+                        label: Street Address
+                        required: true
+                      - name: apartment
+                        type: text
+                        label: Apartment, suite, etc.
+                      - name: city
+                        type: text
+                        label: City
+                        required: true
+                      - name: state
+                        type: select
+                        label: State
+                        options:
+                          - Alabama
+                          - Alaska
+                          - Arizona
+                          - California
+                          - Colorado
+                          - Florida
+                          - Georgia
+                          - New York
+                          - Texas
+                          - Washington
+                        required: true
+                      - name: zipCode
+                        type: text
+                        label: ZIP Code
+                        required: true
+                      - name: phone
+                        type: tel
+                        label: Phone Number
+                        required: true
+
+              - type: card
+                items:
+                  - type: heading
+                    level: 2
+                    label: "3. Shipping Method"
+
+                  - type: radio
+                    options:
+                      - "Standard Shipping (5-7 days) - Free"
+                      - "Express Shipping (2-3 days) - $9.99"
+                      - "Next Day Delivery - $19.99"
+
+              - type: card
+                items:
+                  - type: heading
+                    level: 2
+                    label: "4. Payment Information"
+
+                  - type: form
+                    fields:
+                      - name: cardNumber
+                        type: text
+                        label: Card Number
+                        placeholder: "1234 5678 9012 3456"
+                        required: true
+                      - name: expiry
+                        type: text
+                        label: Expiration Date
+                        placeholder: MM/YY
+                        required: true
+                      - name: cvv
+                        type: text
+                        label: CVV
+                        placeholder: "123"
+                        required: true
+                      - name: nameOnCard
+                        type: text
+                        label: Name on Card
+                        required: true
+
+                  - type: checkbox
+                    label: Billing address same as shipping
+
+                  - type: checkbox
+                    label: Save payment method for future purchases
+
+          - type: column
+            items:
+              - type: card
+                items:
+                  - type: heading
+                    level: 2
+                    label: Order Summary
+
+                  - type: list
+                    source: cart.items
+                    repeat: item
+                    items:
+                      - type: row
+                        items:
+                          - type: image
+                            value: "{item.imageUrl}"
+                            size: xs
+                          - type: column
+                            items:
+                              - type: text
+                                value: "{item.name}"
+                              - type: text
+                                value: "Qty: {item.quantity}"
+                          - type: text
+                            value: "${item.subtotal}"
+
+                  - type: divider
+
+                  - type: row
+                    items:
+                      - type: text
+                        value: Subtotal
+                      - type: text
+                        value: "${cart.subtotal}"
+
+                  - type: row
+                    items:
+                      - type: text
+                        value: Shipping
+                      - type: text
+                        value: "${cart.shipping}"
+
+                  - type: row
+                    items:
+                      - type: text
+                        value: Tax
+                      - type: text
+                        value: "${cart.tax}"
+
+                  - type: row
+                    condition: "{cart.hasDiscount}"
+                    items:
+                      - type: text
+                        value: Discount
+                      - type: text
+                        value: "-${cart.discount}"
+
+                  - type: divider
+
+                  - type: row
+                    items:
+                      - type: heading
+                        level: 3
+                        label: Total
+                      - type: heading
+                        level: 3
+                        label: "${cart.total}"
+
+                  - type: button
+                    label: Place Order
+                    variant: primary
+                    size: lg
+                    onClick: submit
+
+                  - type: text
+                    value: By placing this order, you agree to our Terms of Service and Privacy Policy.
+
+flows:
+  place-order:
+    trigger: place-order-button
+    to: /orders/{order.id}/confirmation

@@ -1,0 +1,377 @@
+================================================================================
+                    PAGE-SPEC YAML: EXAMPLE PROMPTS FOR CLAUDE CODE
+================================================================================
+
+These prompts demonstrate how to use Page-Spec YAML files with Claude Code
+for AI-assisted UI development. Copy and paste these into Claude Code to see
+the power of structured specifications.
+
+Before starting: Run `npx serve page-specs` and open http://localhost:3000
+to browse the specs visually.
+
+================================================================================
+                         1. UNDERSTANDING SPECS
+================================================================================
+
+These prompts help you explore and understand the specifications.
+
+--------------------------------------------------------------------------------
+PROMPT 1.1: Analyze a Page Spec
+--------------------------------------------------------------------------------
+
+Read page-specs/pages/product-detail.ui.yaml and explain:
+1. What components are used on this page?
+2. What user interactions are possible?
+3. What data bindings (dynamic values like {product.name}) are present?
+4. How does this page connect to other pages?
+
+--------------------------------------------------------------------------------
+PROMPT 1.2: Understand a User Flow
+--------------------------------------------------------------------------------
+
+Read page-specs/flows/02.00-browse-and-purchase.flow.yaml and:
+1. List all the pages involved in this flow
+2. Identify the decision points and their branches
+3. Explain the alternate flows (like guest checkout)
+4. Describe the error handling scenarios
+
+--------------------------------------------------------------------------------
+PROMPT 1.3: Compare Layouts
+--------------------------------------------------------------------------------
+
+Read all layout files in page-specs/layouts/ and compare them:
+1. What's different between marketing and dashboard layouts?
+2. Which layout would be best for a user settings page?
+3. How do the navigation items differ between public and authenticated layouts?
+
+--------------------------------------------------------------------------------
+PROMPT 1.4: Generate a Site Map
+--------------------------------------------------------------------------------
+
+Read all files in page-specs/pages/ and generate:
+1. A complete sitemap showing all routes
+2. Group pages by their auth requirements (public, authenticated, admin)
+3. Show which layout each page uses
+
+
+================================================================================
+                         2. GENERATING CODE FROM SPECS
+================================================================================
+
+These prompts generate working code from your specifications.
+
+--------------------------------------------------------------------------------
+PROMPT 2.1: Generate a React Component (Beginner)
+--------------------------------------------------------------------------------
+
+Read page-specs/pages/cart.ui.yaml and generate a React component that:
+- Uses Tailwind CSS for styling
+- Implements the layout and all sections described
+- Includes TypeScript interfaces for the cart data
+- Has placeholder data for testing
+
+--------------------------------------------------------------------------------
+PROMPT 2.2: Generate a Complete Page with State (Intermediate)
+--------------------------------------------------------------------------------
+
+Read page-specs/pages/product-detail.ui.yaml and create:
+1. A React component implementing all sections
+2. A custom hook (useProduct) for fetching and managing product data
+3. TypeScript types for Product, Review, and related entities
+4. The modal component for writing reviews
+
+--------------------------------------------------------------------------------
+PROMPT 2.3: Generate API Routes (Backend)
+--------------------------------------------------------------------------------
+
+Read page-specs/pages/checkout.ui.yaml and page-specs/flows/02.00-browse-and-purchase.flow.yaml, then generate:
+1. Express.js API routes for the checkout process
+2. Zod validation schemas for the form fields
+3. TypeScript interfaces for request/response payloads
+4. Error handling middleware
+
+--------------------------------------------------------------------------------
+PROMPT 2.4: Generate a Full Feature (Advanced)
+--------------------------------------------------------------------------------
+
+Read these specs together:
+- page-specs/pages/cart.ui.yaml
+- page-specs/pages/checkout.ui.yaml
+- page-specs/flows/02.00-browse-and-purchase.flow.yaml
+
+Generate a complete implementation including:
+1. React components for cart and checkout
+2. Cart state management using React Context or Zustand
+3. Form validation for checkout fields
+4. API integration layer with fetch calls
+5. Loading and error states
+
+
+================================================================================
+                         3. CREATING NEW SPECS
+================================================================================
+
+These prompts help you create new specifications following existing patterns.
+
+--------------------------------------------------------------------------------
+PROMPT 3.1: Create a New Page Spec
+--------------------------------------------------------------------------------
+
+Create a new page spec for a "Wishlist" page that:
+- Shows products the user has saved for later
+- Displays product image, name, price, and stock status
+- Allows removing items from the wishlist
+- Has an "Add All to Cart" button
+- Shows empty state when wishlist is empty
+- Uses the dashboard layout
+
+Follow the patterns in page-specs/pages/cart.ui.yaml and save to
+page-specs/pages/wishlist.ui.yaml
+
+--------------------------------------------------------------------------------
+PROMPT 3.2: Create a New Flow
+--------------------------------------------------------------------------------
+
+Create a user flow spec for "Password Reset" that covers:
+1. User clicks "Forgot Password" on login page
+2. User enters email address
+3. System sends reset email
+4. User clicks link in email
+5. User enters new password
+6. Success confirmation
+
+Include alternate flows for:
+- Email not found
+- Reset link expired
+
+Follow the patterns in page-specs/flows/01.00-user-registration.flow.yaml
+
+--------------------------------------------------------------------------------
+PROMPT 3.3: Create an Admin Page
+--------------------------------------------------------------------------------
+
+Create an admin page spec for "Customer Management" that:
+- Lists all customers with search and filter
+- Shows customer name, email, order count, total spent
+- Has a modal to view customer details and order history
+- Allows filtering by date range and order count
+- Uses the admin layout
+
+Follow patterns from page-specs/pages/admin-orders.ui.yaml
+
+
+================================================================================
+                         4. MODIFYING EXISTING SPECS
+================================================================================
+
+These prompts extend existing specifications with new features.
+
+--------------------------------------------------------------------------------
+PROMPT 4.1: Add a Feature to an Existing Page
+--------------------------------------------------------------------------------
+
+Read page-specs/pages/product-detail.ui.yaml and add:
+1. A "Frequently Bought Together" section showing related products
+2. A "Compare" button that adds the product to a comparison list
+3. An "Ask a Question" button that opens a Q&A modal
+4. A "Share" button with social media options
+
+Update the file with these additions.
+
+--------------------------------------------------------------------------------
+PROMPT 4.2: Extend a Flow with New Steps
+--------------------------------------------------------------------------------
+
+Read page-specs/flows/02.00-browse-and-purchase.flow.yaml and add:
+1. A step for applying discount/promo codes
+2. An alternate flow for "Buy Now" that skips the cart
+3. An error flow for address validation failures
+4. Support for gift wrapping option
+
+--------------------------------------------------------------------------------
+PROMPT 4.3: Create a Page Variant
+--------------------------------------------------------------------------------
+
+Read page-specs/pages/products.ui.yaml and create a variant for a "Flash Sale" page:
+- Pre-filters to only show items on sale
+- Adds a countdown timer component at the top
+- Shows "X items left" for low-stock items
+- Uses a different color scheme (use variants)
+
+Save as page-specs/pages/flash-sale.ui.yaml
+
+
+================================================================================
+                         5. TESTING & DOCUMENTATION
+================================================================================
+
+These prompts generate tests and documentation from your specs.
+
+--------------------------------------------------------------------------------
+PROMPT 5.1: Generate E2E Tests
+--------------------------------------------------------------------------------
+
+Read page-specs/flows/02.00-browse-and-purchase.flow.yaml and generate
+Playwright E2E tests that:
+1. Test the happy path (browse → add to cart → checkout → confirmation)
+2. Test the guest checkout alternate flow
+3. Test error handling (payment declined)
+4. Include proper test data fixtures
+
+--------------------------------------------------------------------------------
+PROMPT 5.2: Generate Component Tests
+--------------------------------------------------------------------------------
+
+Read page-specs/pages/cart.ui.yaml and generate:
+1. React Testing Library tests for the cart component
+2. Tests for quantity increment/decrement
+3. Tests for promo code application
+4. Tests for empty cart state
+
+--------------------------------------------------------------------------------
+PROMPT 5.3: Generate API Documentation
+--------------------------------------------------------------------------------
+
+Read all page specs and flow specs, then generate:
+1. OpenAPI/Swagger documentation for required API endpoints
+2. List all API calls needed to support the UI
+3. Define request/response schemas based on the data bindings
+4. Document error responses based on error flows
+
+--------------------------------------------------------------------------------
+PROMPT 5.4: Generate User Documentation
+--------------------------------------------------------------------------------
+
+Read all flow specs and generate user-facing documentation:
+1. Step-by-step guide for completing a purchase
+2. FAQ section based on error flows and alternate paths
+3. Screenshots placeholders with descriptions of what each shows
+
+
+================================================================================
+                         6. WOW FACTOR PROMPTS
+================================================================================
+
+These prompts demonstrate the full power of spec-driven development.
+
+--------------------------------------------------------------------------------
+PROMPT 6.1: Full-Stack Feature Generation
+--------------------------------------------------------------------------------
+
+I want to add a "Product Reviews" feature. Using the existing page-specs:
+
+1. Update page-specs/pages/product-detail.ui.yaml to enhance the reviews section
+2. Create a new page-specs/pages/my-reviews.ui.yaml for users to manage their reviews
+3. Create page-specs/flows/06.00-write-review.flow.yaml for the review submission flow
+4. Generate React components for all review UI
+5. Generate Prisma schema for storing reviews
+6. Generate API routes with validation
+7. Generate E2E tests for the review flow
+
+--------------------------------------------------------------------------------
+PROMPT 6.2: Design System Extraction
+--------------------------------------------------------------------------------
+
+Analyze all page specs in page-specs/pages/ and:
+1. Identify all unique UI patterns and components used
+2. Extract a design token system (colors, spacing, typography implied)
+3. Generate a Tailwind CSS config based on the patterns
+4. Create a component library structure with Storybook stories
+5. Document the design system with usage examples
+
+--------------------------------------------------------------------------------
+PROMPT 6.3: Multi-Page Feature Scaffold
+--------------------------------------------------------------------------------
+
+Create a complete "Gift Cards" feature:
+
+1. Create page specs for:
+   - Gift card purchase page
+   - Gift card redemption page
+   - Gift card balance check page
+   - Admin gift card management page
+
+2. Create a flow spec for the gift card purchase journey
+
+3. Generate:
+   - React components for all pages
+   - Database schema for gift cards
+   - API routes for all operations
+   - Validation logic
+
+--------------------------------------------------------------------------------
+PROMPT 6.4: Accessibility Audit
+--------------------------------------------------------------------------------
+
+Read all page specs and analyze for accessibility:
+1. Identify components that need ARIA attributes
+2. Suggest keyboard navigation improvements
+3. Check for proper heading hierarchy
+4. Identify color contrast concerns based on variants
+5. Generate accessibility-enhanced versions of key components
+
+--------------------------------------------------------------------------------
+PROMPT 6.5: Mobile-First Conversion
+--------------------------------------------------------------------------------
+
+Read page-specs/pages/checkout.ui.yaml and:
+1. Analyze the current multi-column layout
+2. Create a mobile-optimized version with:
+   - Single column layout
+   - Collapsible sections
+   - Sticky order summary
+   - Touch-friendly inputs
+3. Generate responsive React components with Tailwind breakpoints
+
+
+================================================================================
+                         TIPS FOR EFFECTIVE PROMPTS
+================================================================================
+
+1. REFERENCE SPECIFIC FILES
+   Always point to exact file paths so Claude knows what to read.
+
+   Good: "Read page-specs/pages/cart.ui.yaml"
+   Bad:  "Read the cart page spec"
+
+2. SPECIFY OUTPUT FORMAT
+   Tell Claude what technology stack you want.
+
+   Good: "Generate a React component with TypeScript and Tailwind CSS"
+   Bad:  "Generate a component"
+
+3. FOLLOW EXISTING PATTERNS
+   Reference existing files as examples.
+
+   Good: "Follow the patterns in page-specs/pages/account.ui.yaml"
+   Bad:  "Create a page spec"
+
+4. BE SPECIFIC ABOUT SCOPE
+   Clarify what you need generated.
+
+   Good: "Just the React component, not the API"
+   Bad:  "Generate the feature"
+
+5. ASK FOR VALIDATION
+   Request verification against schemas.
+
+   Good: "Verify the output matches the ui-spec.schema.json schema"
+
+================================================================================
+                              GETTING STARTED
+================================================================================
+
+1. Open this project in VS Code with Claude Code
+
+2. Start the spec viewer:
+   cd page-specs && npx serve .
+
+3. Try Prompt 1.1 to understand an existing spec
+
+4. Try Prompt 2.1 to generate your first component
+
+5. Try Prompt 3.1 to create your own spec
+
+6. Iterate: spec → generate → refine → repeat
+
+================================================================================
