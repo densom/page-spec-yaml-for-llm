@@ -66,6 +66,14 @@ Open <http://localhost:3000> to browse all specs interactively.
 
 ![Launching the spec browser](images/Launching%20Docs.gif)
 
+The viewer displays layouts, pages, and flows with their full structure:
+
+![Layouts in the spec browser](images/layouts.png)
+
+![Pages in the spec browser](images/pages.png)
+
+![Flows in the spec browser](images/flows.png)
+
 ### Validate Your Specs
 
 ```bash
