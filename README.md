@@ -14,6 +14,10 @@ This project is a template. Copy the `page-specs/` folder into your real project
 
 The included specs define an **example e-commerce store** — product browsing, cart, checkout, user accounts, and admin dashboards. Use these as a reference for the format, then delete and replace them with your own application's pages and flows.
 
+### Insight
+
+This project is more about the ***concept*** of having AI build a structured data format with validation and human-readable information through a viewer.  This example was generated with AI and only took a few minutes to create.  Use this technique for other topics that help you capture intent in the exception cases where markdown is not effective.  Work with AI to create your own yaml schemas and viewers.
+
 ### Example Prompts
 
 **Generate a component from a spec:**
